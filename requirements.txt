@@ -1,0 +1,5 @@
+yfinance
+pandas
+sqlalchemy
+ipykernel
+tqdm
