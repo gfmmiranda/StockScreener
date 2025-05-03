@@ -190,11 +190,13 @@ def get_all_financials(mapping_file, db_dir, dfp_dir, save_to_db = False):
     # Load the map
     mapping = load_map(mapping_file)
 
-    # Create database connection
-    engine = create_engine(f"sqlite:///{db_dir}")
+    if save_to_db:
+        # Create database connection
+        engine = create_engine(f"sqlite:///{db_dir}")
 
-    # Drop all tables in the database
-    drop_all_tables(engine)
+        # Drop all tables in the database
+        with engine.begin() as conn:
+            conn.execute(text(f"DROP TABLE IF EXISTS financials"))
 
     all_financials = []
     # Process files
@@ -218,7 +220,7 @@ def get_all_financials(mapping_file, db_dir, dfp_dir, save_to_db = False):
 
         # Save to database
         if save_to_db:
-            financials_df.to_sql('financials', engine, if_exists='replace', index=False)
+            financials_df.to_sql('financials', engine, if_exists='append', index=False)
 
         # Append to list
         all_financials.append(financials_df)
@@ -243,9 +245,3 @@ def drop_all_tables(engine):
         for table_name in inspector.get_table_names():
             conn.execute(text(f"DROP TABLE IF EXISTS {table_name}"))
             print(f"Dropped table {table_name}")
-
-# def save_to_database(prices_df, financials_df, db_path='data/stock_data.db'):
-#     engine = create_engine(f'sqlite:///{db_path}')
-    
-#     prices_df.to_sql('prices', engine, if_exists='replace', index=False)
-#     financials_df.to_sql('financials', engine, if_exists='replace', index=False)

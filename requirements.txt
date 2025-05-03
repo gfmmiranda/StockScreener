@@ -3,3 +3,7 @@ pandas
 sqlalchemy
 ipykernel
 tqdm
+matplotlib
+seaborn
+dtaidistance
+scipy
